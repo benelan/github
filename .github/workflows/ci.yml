@@ -1,0 +1,70 @@
+name: CI
+on:
+  workflow_call:
+    inputs:
+      release:
+        description: "Release"
+        type: boolean
+        required: false
+        default: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v6.7.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    permissions:
+      contents: write
+    name: release
+    needs: lint
+    if: inputs.release && contains(fromJSON('["master", "main"]'), github.ref_name)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          fetch-tags: true
+      - name: release-please config
+        id: release-please-config
+        run: |
+          if [ -f .github/release-please-config.json ]; then
+            echo "config-file=.github/release-please-config.json" >> $GITHUB_OUTPUT
+            [ -f .github/release-please-manifest.json ] &&
+              echo "manifest-file=.github/release-please-manifest.json" >> $GITHUB_OUTPUT
+            [ -f .github/.release-please-manifest.json ] &&
+              echo "manifest-file=.github/.release-please-manifest.json" >> $GITHUB_OUTPUT
+          else
+            echo "release-type=simple" >> $GITHUB_OUTPUT
+          fi
+          exit 0
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: ${{ steps.release-please-config.outputs.config-file }}
+          release-type: ${{ steps.release-please-config.outputs.release-type }}
+          manifest-file: ${{ steps.release-please-config.outputs.manifest-file }}
+      - name: tag stable versions
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git tag -d stable || true
+          git push origin :stable || true
+          git tag -a stable -m "Last Stable Release"
+          git push origin stable

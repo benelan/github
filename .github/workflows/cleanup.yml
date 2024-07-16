@@ -1,0 +1,33 @@
+name: Scheduled Cleanup
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  repo-settings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Update Repo Settings
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_USER_TOKEN }}
+          script: |
+            const script = require('${{ github.workspace }}/scripts/repo.js')
+            script({github, context, core})
+
+  notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Cleanup Notifications
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_USER_TOKEN }}
+          script: |
+            const script = require('${{ github.workspace }}/scripts/notifications.js')
+            script({github, context, core})

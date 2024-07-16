@@ -1,0 +1,19 @@
+name: PR
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  pr-title:
+    uses: benelan/github/.github/workflows/pr.yml@main
+    secrets: inherit

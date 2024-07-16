@@ -1,0 +1,9 @@
+{
+  "name": "github",
+  "private": true,
+  "description": "Personal github actions and scripts",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/github-script": "github:actions/github-script"
+  }
+}

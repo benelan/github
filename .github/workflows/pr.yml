@@ -1,0 +1,42 @@
+name: PR
+
+on:
+  workflow_call:
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      statuses: write
+    steps:
+      - name: Validate PR Title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ignoreLabels: |
+            autorelease: pending
+
+  milestone:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Add Current Milestone
+        uses: benelan/milestone-action@v3
+
+  # label:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pull-requests: write
+  #     issues: write
+  #   steps:
+  #     - name: Add Conventional Type Label
+  #       uses: actions/github-script@v7
+  #       with:
+  #         script: |
+  #           const script = require('${{ github.workspace }}/scripts/label.js')
+  #           await script({github, context, core})
