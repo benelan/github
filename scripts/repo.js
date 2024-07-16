@@ -7,15 +7,15 @@ module.exports = async ({ github, context }) => {
     per_page: 100,
   });
 
-  const LABELS = [
+  // const LABELS = [
     // { name: "bug", color: "#d73a4a" },
     // { name: "chore", color: "#f3c69b" },
     // { name: "documentation", color: "#0075ca" },
     // { name: "enhancement", color: "#a2eeef" },
     // { name: "performance", color: "#B822F7" },
     // { name: "testing", color: "#fbca04" },
-    { name: "autorelease: pending", color: "#167618" },
-  ];
+    // { name: "autorelease: pending", color: "#167618" },
+  // ];
 
   for (const repo of repos) {
     if (repo.fork || repo.archived || repo.disabled) {
@@ -63,40 +63,40 @@ module.exports = async ({ github, context }) => {
       },
     );
 
-    // Labels
-    const labels = await github.rest.issues.listLabelsForRepo({
-      owner,
-      repo: name,
-    });
-
-    for (const label of LABELS) {
-      const existing = labels.data.find(
-        (label) => label.name.toLowerCase() === label.name.toLowerCase(),
-      );
-
-      if (
-        existing?.color === label.color &&
-        existing?.description === label.description
-      ) {
-        continue;
-      }
-
-      if (existing) {
-        await github.rest.issues.updateLabel({
-          owner,
-          repo: name,
-          name: label.name,
-          new_name: label.name,
-          color: label.color,
-        });
-      } else {
-        await github.rest.issues.createLabel({
-          owner,
-          repo: name,
-          name: label.name,
-          color: label.color,
-        });
-      }
-    }
+  //   // Labels
+  //   const labels = await github.rest.issues.listLabelsForRepo({
+  //     owner,
+  //     repo: name,
+  //   });
+  //
+  //   for (const label of LABELS) {
+  //     const existing = labels.data.find(
+  //       (l) => l.name.toLowerCase() === label.name.toLowerCase(),
+  //     );
+  //
+  //     if (
+  //       existing?.color === label.color &&
+  //       existing?.description === label.description
+  //     ) {
+  //       continue;
+  //     }
+  //
+  //     if (existing) {
+  //       await github.rest.issues.updateLabel({
+  //         owner,
+  //         repo: name,
+  //         name: label.name,
+  //         new_name: label.name,
+  //         color: label.color,
+  //       });
+  //     } else {
+  //       await github.rest.issues.createLabel({
+  //         owner,
+  //         repo: name,
+  //         name: label.name,
+  //         color: label.color,
+  //       });
+  //     }
+  //   }
   }
 };
