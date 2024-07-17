@@ -1,9 +1,11 @@
 {
   "name": "github",
+  "version": "1.0.0",
   "private": true,
   "description": "Personal github actions and scripts",
   "license": "MIT",
   "devDependencies": {
-    "@types/github-script": "github:actions/github-script"
+    "@types/github-script": "github:actions/github-script",
+    "@types/node": "^20.14.11"
   }
 }
