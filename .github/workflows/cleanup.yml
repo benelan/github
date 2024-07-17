@@ -7,13 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       before:
-        description: End of the notification cleanup time range in days relative to now (default is 0)
+        description: End of the notification cleanup time range in days relative to now
         type: number
         required: false
+        default: 0
       since:
-        description: Start of the notification cleanup time range in days relative to now (default is 3)
+        description: Start of the notification cleanup time range in days relative to now
         type: number
         required: false
+        default: 3
 
 jobs:
   repo-settings:
