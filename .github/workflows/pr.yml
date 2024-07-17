@@ -4,12 +4,32 @@ name: PR
 on:
   workflow_call:
 
+permissions: { }
+
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v6.7.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_CHECKOV: false
+
   pr-title:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
-      statuses: write
     steps:
       - name: Validate PR Title
         uses: amannn/action-semantic-pull-request@v5
@@ -19,15 +39,16 @@ jobs:
           ignoreLabels: |
             autorelease: pending
 
-  milestone:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      issues: write
-    steps:
-      - name: Add Current Milestone
-        uses: benelan/milestone-action@v3
+  # milestone:
+  #   if: github.event.pull_request.merged == true
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pull-requests: write
+  #   steps:
+  #     - name: Add Current Milestone
+  #       uses: benelan/milestone-action@v3
+  #       with:
+  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   # label:
   #   runs-on: ubuntu-latest
