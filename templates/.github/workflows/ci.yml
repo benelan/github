@@ -8,5 +8,6 @@ on:
 
 jobs:
   ci:
+    if: github.repository_owner == 'benelan'
     uses: benelan/github/.github/workflows/ci.yml@main
     secrets: inherit
