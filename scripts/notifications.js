@@ -2,6 +2,10 @@
 /** @param {import('github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 module.exports = async ({ github, context }) => {
   try {
+    console.log(`Cleaning up notifications`);
+    console.log(`Event name: ${context.eventName}`);
+    console.log(`Current date: ${new Date().toISOString()}`);
+
     /**
      * @param {number} days
      */
@@ -11,21 +15,32 @@ module.exports = async ({ github, context }) => {
       ).toISOString();
     }
 
-    const since = date(parseInt(process.env.SINCE ?? "3"));
-    const before = date(
-      context.eventName == "workflow_dispatch"
-        ? parseInt(process.env.BEFORE ?? "0")
-        : 1,
-    );
+    const daysSince = process.env.SINCE?.length
+      ? parseInt(process.env.SINCE)
+      : 3;
 
-    console.log(`Cleaning up notifications`);
-    console.log(`Event name: ${context.eventName}`);
-    console.log(`Current date: ${new Date().toISOString()}`);
-    console.log(`Since: ${since}`);
-    console.log(`Before: ${before}`);
+    const daysBefore =
+      context.eventName === "workflow_dispatch"
+        ? process.env.BEFORE?.length
+          ? parseInt(process.env.BEFORE)
+          : 0
+        : 1;
+
+    console.log(`Since (days: ${daysSince}`);
+    console.log(`Before (days): ${daysBefore}`);
+
+    const since = date(daysSince);
+    const before = date(daysBefore);
+
+    console.log(`Since (date): ${since}`);
+    console.log(`Before (date): ${before}`);
 
     // Fetch notifications for the current page
-    const notifs = await github.paginate("GET /notifications", { all: true, before, since });
+    const notifs = await github.paginate("GET /notifications", {
+      all: true,
+      before,
+      since,
+    });
 
     // Loop through each notification and its corresponding ID
     for (const notif of notifs) {
