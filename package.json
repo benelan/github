@@ -5,6 +5,7 @@
   "description": "Personal github actions and scripts",
   "license": "MIT",
   "devDependencies": {
+    "@octokit/webhooks-types": "^7.5.1",
     "@types/github-script": "github:actions/github-script",
     "@types/node": "^20.14.11"
   }
