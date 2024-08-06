@@ -1,10 +1,12 @@
 // @ts-check
 /** @param {import('github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 module.exports = async ({ github, context }) => {
-  const { title, number } =
-    /** @type {import('@octokit/webhooks-types').PullRequest} PullRequest */ (
-      context.payload.pull_request
+  const payload =
+    /** @type {import('@octokit/webhooks-types').PullRequestEvent} */ (
+      context.payload
     );
+
+  const { number, title } = payload.pull_request;
 
   const conventionalCommitRegex =
     /^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([\w ,-]+\))?(!?:\s+)([\w ]+[\s\S]*)/i;
