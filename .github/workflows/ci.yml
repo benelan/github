@@ -56,7 +56,6 @@ jobs:
           config-file: ${{ steps.release-please-config.outputs.config-file }}
           release-type: ${{ steps.release-please-config.outputs.release-type }}
           manifest-file: ${{ steps.release-please-config.outputs.manifest-file }}
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
         run: |
