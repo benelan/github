@@ -8,13 +8,13 @@ module.exports = async ({ github, context }) => {
   });
 
   // const LABELS = [
-    // { name: "bug", color: "#d73a4a" },
-    // { name: "chore", color: "#f3c69b" },
-    // { name: "documentation", color: "#0075ca" },
-    // { name: "enhancement", color: "#a2eeef" },
-    // { name: "performance", color: "#B822F7" },
-    // { name: "testing", color: "#fbca04" },
-    // { name: "autorelease: pending", color: "#167618" },
+  //   { name: "bug", color: "#d73a4a" },
+  //   { name: "chore", color: "#f3c69b" },
+  //   { name: "documentation", color: "#0075ca" },
+  //   { name: "enhancement", color: "#a2eeef" },
+  //   { name: "performance", color: "#B822F7" },
+  //   { name: "testing", color: "#fbca04" },
+  //   { name: "autorelease: pending", color: "#167618" },
   // ];
 
   for (const repo of repos) {
@@ -30,15 +30,30 @@ module.exports = async ({ github, context }) => {
     await github.rest.repos.update({
       repo: name,
       owner: owner,
-      allow_update_branch: true,
       has_discussions: false,
-      allow_squash_merge: true,
-      allow_rebase_merge: true,
-      allow_merge_commit: false,
       has_wiki: true,
-      squash_merge_commit_title: "PR_TITLE",
+      allow_update_branch: true,
+      delete_branch_on_merge: true,
+      allow_merge_commit: false,
+      allow_rebase_merge: true,
+      allow_squash_merge: true,
+      squash_merge_commit_title: "COMMIT_OR_PR_TITLE",
       squash_merge_commit_message: "PR_BODY",
+      security_and_analysis: {
+        advanced_security: { status: "enabled" },
+        secret_scanning: { status: "enabled" },
+        secret_scanning_push_protection: { status: "enabled" },
+      },
     });
+
+    // allow the default GITHUB_TOKEN to create and approve pull requests
+    await github.rest.actions.setGithubActionsDefaultWorkflowPermissionsRepository(
+      {
+        repo: name,
+        owner: owner,
+        can_approve_pull_request_reviews: true,
+      },
+    );
 
     const branch = repo.default_branch;
     // Update branch protection
@@ -63,40 +78,40 @@ module.exports = async ({ github, context }) => {
       },
     );
 
-  //   // Labels
-  //   const labels = await github.rest.issues.listLabelsForRepo({
-  //     owner,
-  //     repo: name,
-  //   });
-  //
-  //   for (const label of LABELS) {
-  //     const existing = labels.data.find(
-  //       (l) => l.name.toLowerCase() === label.name.toLowerCase(),
-  //     );
-  //
-  //     if (
-  //       existing?.color === label.color &&
-  //       existing?.description === label.description
-  //     ) {
-  //       continue;
-  //     }
-  //
-  //     if (existing) {
-  //       await github.rest.issues.updateLabel({
-  //         owner,
-  //         repo: name,
-  //         name: label.name,
-  //         new_name: label.name,
-  //         color: label.color,
-  //       });
-  //     } else {
-  //       await github.rest.issues.createLabel({
-  //         owner,
-  //         repo: name,
-  //         name: label.name,
-  //         color: label.color,
-  //       });
-  //     }
-  //   }
+    //   // Labels
+    //   const labels = await github.rest.issues.listLabelsForRepo({
+    //     owner,
+    //     repo: name,
+    //   });
+    //
+    //   for (const label of LABELS) {
+    //     const existing = labels.data.find(
+    //       (l) => l.name.toLowerCase() === label.name.toLowerCase(),
+    //     );
+    //
+    //     if (
+    //       existing?.color === label.color &&
+    //       existing?.description === label.description
+    //     ) {
+    //       continue;
+    //     }
+    //
+    //     if (existing) {
+    //       await github.rest.issues.updateLabel({
+    //         owner,
+    //         repo: name,
+    //         name: label.name,
+    //         new_name: label.name,
+    //         color: label.color,
+    //       });
+    //     } else {
+    //       await github.rest.issues.createLabel({
+    //         owner,
+    //         repo: name,
+    //         name: label.name,
+    //         color: label.color,
+    //       });
+    //     }
+    //   }
   }
 };
