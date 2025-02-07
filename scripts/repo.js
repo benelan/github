@@ -57,9 +57,9 @@ module.exports = async ({ github, context }) => {
         required_conversation_resolution: false,
         required_linear_history: true,
         required_signatures: false,
-        required_status_checks: undefined,
-        required_pull_request_reviews: undefined,
-        restrictions: undefined,
+        restrictions: null,
+        required_pull_request_reviews: null,
+        required_status_checks: null,
       },
     );
 
