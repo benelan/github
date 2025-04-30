@@ -3,6 +3,11 @@ name: CI
 on:
   workflow_call:
     inputs:
+      lint:
+        description: "Lint"
+        type: boolean
+        required: false
+        default: true
       release:
         description: "Release"
         type: boolean
@@ -12,6 +17,7 @@ on:
 jobs:
   lint:
     name: Lint
+    if: inputs.release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,7 +34,7 @@ jobs:
 
   release:
     name: release
-    needs: lint
+    # needs: lint
     if: |
       inputs.release && 
       github.event_name == 'push' && 
