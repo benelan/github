@@ -17,7 +17,7 @@ on:
 jobs:
   lint:
     name: Lint
-    if: inputs.release
+    if: ${{ inputs.lint }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
