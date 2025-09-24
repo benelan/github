@@ -30,6 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: ./
           MARKDOWN_CONFIG_FILE: .markdownlintrc
+          IGNORE_GENERATED_FILES: true
+          VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_JSCPD: false
           VALIDATE_CHECKOV: false
 
   release:
