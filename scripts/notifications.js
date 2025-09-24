@@ -52,28 +52,31 @@ module.exports = async ({ github, context }) => {
       ) {
         done = true;
       } else if (["Issue", "PullRequest"].includes(notif.subject.type)) {
-        const details = await github.request(`GET ${notif.subject.url}`);
+        try {
+          const details = await github.request(`GET ${notif.subject.url}`);
+          // Mark as done if the issue/PR is closed
+          if (details.data.state === "closed") {
+            done = true;
 
-        // Mark as done if the issue/PR is closed
-        if (details.data.state === "closed") {
-          done = true;
-
-          // If the issue/PR is open, check if the latest comment is from a bot
-        } else if (notif.subject.latest_comment_url) {
-          // Fetch the comment details
-          const comment = await github.request(
-            `GET ${notif.subject.latest_comment_url}`,
-          );
-
-          done =
-            [
-              "github-actions[bot]",
-              "renovate[bot]",
-              "dependabot[bot]",
-            ].includes(comment.data.user.login) &&
-            /(stale|Renovate Ignore|:robot: Release is at|Superseded by)/.test(
-              comment.data.body,
+            // If the issue/PR is open, check if the latest comment is from a bot
+          } else if (notif.subject.latest_comment_url) {
+            // Fetch the comment details
+            const comment = await github.request(
+              `GET ${notif.subject.latest_comment_url}`,
             );
+
+            done =
+              [
+                "github-actions[bot]",
+                "renovate[bot]",
+                "dependabot[bot]",
+              ].includes(comment.data.user.login) &&
+              /(stale|Renovate Ignore|:robot: Release is at|Superseded by)/.test(
+                comment.data.body,
+              );
+          }
+        } catch {
+          done = false;
         }
       }
 
