@@ -76,7 +76,7 @@ module.exports = async ({ github, context }) => {
               );
           }
         } catch {
-          done = false;
+          done = true;
         }
       }
 
