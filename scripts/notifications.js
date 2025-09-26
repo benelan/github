@@ -17,16 +17,16 @@ module.exports = async ({ github, context }) => {
 
     const daysSince = process.env.SINCE?.length
       ? parseInt(process.env.SINCE)
-      : 3;
+      : 7;
 
     const daysBefore =
       context.eventName === "workflow_dispatch"
         ? process.env.BEFORE?.length
           ? parseInt(process.env.BEFORE)
           : 0
-        : 1;
+        : 3;
 
-    console.log(`Since (days: ${daysSince}`);
+    console.log(`Since (days): ${daysSince}`);
     console.log(`Before (days): ${daysBefore}`);
 
     const since = date(daysSince);
