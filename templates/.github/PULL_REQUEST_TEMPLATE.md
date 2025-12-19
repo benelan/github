@@ -1,3 +1,3 @@
+<!-- description of the changes -->
 
-
-Resolves #<!-- issue_number -->
+Resolves #<!-- issue number -->
